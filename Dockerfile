@@ -40,7 +40,7 @@ COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 COPY . /var/www/html
 
 # Install PHP dependencies without dev dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
 # Install Node dependencies and compile production frontend assets via Vite
 RUN npm install --ignore-scripts && npm run build
