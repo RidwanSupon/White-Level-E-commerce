@@ -23,9 +23,7 @@ services:
       - key: DB_CONNECTION
         value: pgsql
       - key: DATABASE_URL
-        fromDatabase:
-          name: ecommerce-db
-          property: connectionString
+        sync: false
       - key: FILESYSTEM_DISK
         value: supabase
       - key: CACHE_STORE
@@ -34,13 +32,3 @@ services:
         value: database
       - key: QUEUE_CONNECTION
         value: sync
-
-databases:
-  # -------------------------------------------------------------
-  # 2. Managed PostgreSQL Database
-  # -------------------------------------------------------------
-  - name: ecommerce-db
-    databaseName: ecommerce_db
-    user: ecommerce_user
-    plan: free
-    region: singapore
