@@ -13,7 +13,6 @@ RUN apk add --no-cache \
     freetype-dev \
     libxml2-dev \
     postgresql-dev \
-    sqlite-dev \
     oniguruma-dev \
     nginx \
     supervisor \
@@ -26,7 +25,6 @@ RUN apk add --no-cache \
         pdo \
         pdo_pgsql \
         pgsql \
-        pdo_sqlite \
         bcmath \
         mbstring \
         opcache \
