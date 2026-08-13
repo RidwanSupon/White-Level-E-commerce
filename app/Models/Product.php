@@ -76,20 +76,16 @@ class Product extends Model
 
     public function getFeaturedImageUrlAttribute(): string
     {
+        $storage = app(\App\Services\StorageService::class);
+
         if (!empty($this->featured_image)) {
-            // Check if file exists locally or is external URL
-            if (str_starts_with($this->featured_image, 'http://') || str_starts_with($this->featured_image, 'https://')) {
-                return $this->featured_image;
-            }
-            if (file_exists(public_path(ltrim($this->featured_image, '/')))) {
-                return asset(ltrim($this->featured_image, '/'));
-            }
+            return $storage->url($this->featured_image);
         }
 
-        // Fallback to first primary/gallery image if featured_image path is broken
+        // Fallback to first primary/gallery image if featured_image path is empty
         $primary = $this->images()->orderBy('is_primary', 'desc')->orderBy('sort_order', 'asc')->first();
-        if ($primary && !empty($primary->image_path) && file_exists(public_path(ltrim($primary->image_path, '/')))) {
-            return asset(ltrim($primary->image_path, '/'));
+        if ($primary && !empty($primary->image_path)) {
+            return $storage->url($primary->image_path);
         }
 
         return asset('images/placeholder.png');

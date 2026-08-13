@@ -16,4 +16,9 @@ class ProductImage extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function getImageUrlAttribute(): string
+    {
+        return app(\App\Services\StorageService::class)->url($this->image_path);
+    }
 }

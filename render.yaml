@@ -27,7 +27,7 @@ services:
           name: ecommerce-db
           property: connectionString
       - key: FILESYSTEM_DISK
-        value: public
+        value: s3
       - key: CACHE_STORE
         value: database
       - key: SESSION_DRIVER

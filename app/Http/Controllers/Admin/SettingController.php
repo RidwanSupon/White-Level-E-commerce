@@ -28,9 +28,11 @@ class SettingController extends Controller
 
             $file = $request->file('site_logo_file');
             $filename = 'logo_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/branding'), $filename);
+            $path = app(\App\Services\StorageService::class)->upload($file, 'branding', $filename);
             
-            $settingService->set('site_logo', '/uploads/branding/' . $filename);
+            if ($path) {
+                $settingService->set('site_logo', $path);
+            }
         }
 
         foreach ($data as $key => $value) {

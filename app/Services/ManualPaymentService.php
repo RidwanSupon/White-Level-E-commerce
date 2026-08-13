@@ -54,13 +54,10 @@ class ManualPaymentService
         if (isset($data['payment_proof']) && $data['payment_proof'] instanceof UploadedFile) {
             $file = $data['payment_proof'];
             if ($file->isValid()) {
-                $dir = public_path('uploads/payment_proofs');
-                if (!File::exists($dir)) {
-                    File::makeDirectory($dir, 0755, true);
-                }
+                $year = date('Y');
+                $month = date('m');
                 $filename = 'proof_' . $order->id . '_' . time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
-                $file->move($dir, $filename);
-                $proofPath = '/uploads/payment_proofs/' . $filename;
+                $proofPath = app(\App\Services\StorageService::class)->upload($file, "payments/{$year}/{$month}/{$order->id}", $filename, 'private');
             }
         }
 

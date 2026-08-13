@@ -283,6 +283,6 @@ class ManualPaymentSystemTest extends TestCase
 
         $payment = ManualPayment::latest()->first();
         $this->assertNotNull($payment->payment_proof);
-        $this->assertStringContainsString('/uploads/payment_proofs/', $payment->payment_proof);
+        $this->assertTrue(str_contains($payment->payment_proof, 'payments/') || str_contains($payment->payment_proof, 'uploads/'));
     }
 }

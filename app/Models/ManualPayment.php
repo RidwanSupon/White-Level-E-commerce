@@ -48,10 +48,6 @@ class ManualPayment extends Model
             return null;
         }
 
-        if (str_starts_with($this->payment_proof, 'http')) {
-            return $this->payment_proof;
-        }
-
-        return asset(ltrim($this->payment_proof, '/'));
+        return app(\App\Services\StorageService::class)->url($this->payment_proof);
     }
 }

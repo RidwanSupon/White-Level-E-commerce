@@ -91,21 +91,23 @@ class AdminProductController extends Controller
             // Process Direct Multiple Gallery Image Uploads
             if ($request->hasFile('product_images')) {
                 $images = $request->file('product_images');
+                $storageService = app(\App\Services\StorageService::class);
                 foreach ($images as $index => $imgFile) {
                     if ($imgFile->isValid()) {
                         $imgName = 'prod_' . $product->id . '_' . time() . '_' . ($index + 1) . '.' . $imgFile->getClientOriginalExtension();
-                        $imgFile->move(public_path('uploads/products'), $imgName);
-                        $imgPath = '/uploads/products/' . $imgName;
+                        $imgPath = $storageService->upload($imgFile, "products/{$product->id}/images", $imgName);
 
-                        ProductImage::create([
-                            'product_id' => $product->id,
-                            'image_path' => $imgPath,
-                            'sort_order' => $index + 1,
-                            'is_primary' => ($index === 0),
-                        ]);
+                        if ($imgPath) {
+                            ProductImage::create([
+                                'product_id' => $product->id,
+                                'image_path' => $imgPath,
+                                'sort_order' => $index + 1,
+                                'is_primary' => ($index === 0),
+                            ]);
 
-                        if ($index === 0 && ($product->featured_image === '/images/placeholder.png' || empty($product->featured_image))) {
-                            $product->update(['featured_image' => $imgPath]);
+                            if ($index === 0 && ($product->featured_image === '/images/placeholder.png' || empty($product->featured_image))) {
+                                $product->update(['featured_image' => $imgPath]);
+                            }
                         }
                     }
                 }
@@ -193,23 +195,25 @@ class AdminProductController extends Controller
             if ($request->hasFile('product_images')) {
                 $images = $request->file('product_images');
                 $currentMaxOrder = $product->images()->max('sort_order') ?? 0;
+                $storageService = app(\App\Services\StorageService::class);
 
                 foreach ($images as $index => $imgFile) {
                     if ($imgFile->isValid()) {
                         $newOrder = $currentMaxOrder + $index + 1;
                         $imgName = 'prod_' . $product->id . '_' . time() . '_' . $newOrder . '.' . $imgFile->getClientOriginalExtension();
-                        $imgFile->move(public_path('uploads/products'), $imgName);
-                        $imgPath = '/uploads/products/' . $imgName;
+                        $imgPath = $storageService->upload($imgFile, "products/{$product->id}/images", $imgName);
 
-                        ProductImage::create([
-                            'product_id' => $product->id,
-                            'image_path' => $imgPath,
-                            'sort_order' => $newOrder,
-                            'is_primary' => false,
-                        ]);
+                        if ($imgPath) {
+                            ProductImage::create([
+                                'product_id' => $product->id,
+                                'image_path' => $imgPath,
+                                'sort_order' => $newOrder,
+                                'is_primary' => false,
+                            ]);
 
-                        if (empty($product->featured_image) || $product->featured_image === '/images/placeholder.png') {
-                            $product->update(['featured_image' => $imgPath]);
+                            if (empty($product->featured_image) || $product->featured_image === '/images/placeholder.png') {
+                                $product->update(['featured_image' => $imgPath]);
+                            }
                         }
                     }
                 }
@@ -294,11 +298,7 @@ class AdminProductController extends Controller
                 $otherReferences = ProductImage::where('image_path', $deletedPath)->count() 
                                  + Product::where('featured_image', $deletedPath)->count();
                 if ($otherReferences === 0) {
-                    $relativeFile = ltrim($deletedPath, '/');
-                    $fullPath = public_path($relativeFile);
-                    if (File::exists($fullPath)) {
-                        File::delete($fullPath);
-                    }
+                    app(\App\Services\StorageService::class)->delete($deletedPath);
                 }
             }
 
