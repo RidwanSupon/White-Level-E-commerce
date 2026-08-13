@@ -13,6 +13,7 @@ RUN apk add --no-cache \
     freetype-dev \
     libxml2-dev \
     postgresql-dev \
+    sqlite-dev \
     oniguruma-dev \
     nginx \
     supervisor \
