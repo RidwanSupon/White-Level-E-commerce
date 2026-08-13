@@ -48,6 +48,6 @@ class ManualPayment extends Model
             return null;
         }
 
-        return app(\App\Services\StorageService::class)->url($this->payment_proof);
+        return app(\App\Services\StorageService::class)->temporaryUrl($this->payment_proof, 60);
     }
 }

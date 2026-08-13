@@ -7,28 +7,28 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
-class MigrateStorageToR2Command extends Command
+class MigrateStorageToSupabaseCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'storage:migrate-to-r2 {--disk= : Target storage disk (defaults to filesystems.default)}';
+    protected $signature = 'storage:migrate-to-supabase {--disk= : Target storage disk (defaults to filesystems.default or supabase)}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Safely migrate existing local uploaded images to S3/Cloudflare R2 storage without deleting local files.';
+    protected $description = 'Safely migrate existing local uploaded images to Supabase Storage without deleting local files.';
 
     /**
      * Execute the console command.
      */
     public function handle(StorageService $storageService): int
     {
-        $targetDisk = $this->option('disk') ?: config('filesystems.default', 's3');
+        $targetDisk = $this->option('disk') ?: config('filesystems.default', 'supabase');
         $this->info("🚀 Starting storage migration to disk: [{$targetDisk}]...");
 
         $uploadDirectory = public_path('uploads');
@@ -67,7 +67,7 @@ class MigrateStorageToR2Command extends Command
                 $success = Storage::disk($targetDisk)->put($targetPath, $content, 'public');
 
                 if ($success) {
-                    $this->info("✅ Migrated: {$targetPath}");
+                    $this->info("✅ Migrated to Supabase Storage: {$targetPath}");
                     $migrated++;
                 } else {
                     $this->error("❌ Failed to migrate: {$targetPath}");
@@ -80,7 +80,7 @@ class MigrateStorageToR2Command extends Command
         }
 
         $this->newLine();
-        $this->info("📊 Storage Migration Summary:");
+        $this->info("📊 Supabase Storage Migration Summary:");
         $this->table(
             ['Total Discovered', 'Successfully Migrated', 'Skipped (Already Existed)', 'Failed'],
             [[$totalFiles, $migrated, $skipped, $failed]]

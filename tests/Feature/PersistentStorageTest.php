@@ -44,8 +44,8 @@ class PersistentStorageTest extends TestCase
     /** @test */
     public function test_01_product_image_is_uploaded_using_storage_abstraction()
     {
-        Storage::fake('s3');
-        config(['filesystems.default' => 's3']);
+        Storage::fake('supabase');
+        config(['filesystems.default' => 'supabase']);
 
         $file = UploadedFile::fake()->image('product_test.jpg', 800, 800);
 
@@ -64,15 +64,15 @@ class PersistentStorageTest extends TestCase
         $product = Product::where('sku', 'STOR-001')->firstOrFail();
         $this->assertNotEmpty($product->featured_image);
 
-        // Verify file exists on S3 disk
-        Storage::disk('s3')->assertExists($product->featured_image);
+        // Verify file exists on Supabase Storage disk
+        Storage::disk('supabase')->assertExists($product->featured_image);
     }
 
     /** @test */
     public function test_02_product_image_deletion_removes_file_from_storage()
     {
-        Storage::fake('s3');
-        config(['filesystems.default' => 's3']);
+        Storage::fake('supabase');
+        config(['filesystems.default' => 'supabase']);
 
         $file = UploadedFile::fake()->image('to_delete.jpg', 400, 400);
         $path = app(StorageService::class)->upload($file, 'products/99/images');
@@ -95,13 +95,13 @@ class PersistentStorageTest extends TestCase
             'is_primary' => true,
         ]);
 
-        Storage::disk('s3')->assertExists($path);
+        Storage::disk('supabase')->assertExists($path);
 
         // Delete gallery image via controller
         $this->actingAs($this->admin)->delete(route('admin.products.images.destroy', $image->id));
 
-        // Verify file deleted from S3 storage
-        Storage::disk('s3')->assertMissing($path);
+        // Verify file deleted from Supabase Storage
+        Storage::disk('supabase')->assertMissing($path);
     }
 
     /** @test */
@@ -127,7 +127,7 @@ class PersistentStorageTest extends TestCase
     /** @test */
     public function test_04_storage_migrate_command_discovers_and_uploads_local_files()
     {
-        Storage::fake('s3');
+        Storage::fake('supabase');
 
         // Create temporary local file in public/uploads/test_migrate.png
         $testDir = public_path('uploads/test_migrate');
@@ -137,10 +137,10 @@ class PersistentStorageTest extends TestCase
         $testFile = $testDir . '/sample.png';
         File::put($testFile, 'fake_png_data');
 
-        $this->artisan('storage:migrate-to-r2', ['--disk' => 's3'])
+        $this->artisan('storage:migrate-to-supabase', ['--disk' => 'supabase'])
             ->assertExitCode(0);
 
-        Storage::disk('s3')->assertExists('uploads/test_migrate/sample.png');
+        Storage::disk('supabase')->assertExists('uploads/test_migrate/sample.png');
 
         // Clean up temporary local test file
         File::delete($testFile);

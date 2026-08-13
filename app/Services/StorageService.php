@@ -120,4 +120,36 @@ class StorageService
             return asset(ltrim($fallback, '/'));
         }
     }
+
+    /**
+     * Generate a signed temporary URL for private uploads (e.g., payment screenshots).
+     *
+     * @param string|null $path
+     * @param int $minutes
+     * @return string|null
+     */
+    public function temporaryUrl(?string $path, int $minutes = 60): ?string
+    {
+        if (empty($path)) {
+            return null;
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        $disk = $this->getDiskName();
+        $cleanPath = ltrim($path, '/');
+
+        try {
+            // If the driver supports temporaryUrl (e.g. S3 / Supabase Storage), generate signed URL
+            if (method_exists(Storage::disk($disk), 'temporaryUrl')) {
+                return Storage::disk($disk)->temporaryUrl($cleanPath, now()->addMinutes($minutes));
+            }
+        } catch (\Throwable $e) {
+            Log::info('Temporary URL generation fallback to public URL: ' . $e->getMessage());
+        }
+
+        return $this->url($path);
+    }
 }

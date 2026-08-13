@@ -27,7 +27,7 @@ services:
           name: ecommerce-db
           property: connectionString
       - key: FILESYSTEM_DISK
-        value: s3
+        value: supabase
       - key: CACHE_STORE
         value: database
       - key: SESSION_DRIVER
