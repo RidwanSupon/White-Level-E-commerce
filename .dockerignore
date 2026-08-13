@@ -1,0 +1,17 @@
+.git
+.gitignore
+.env
+.env.*
+.editorconfig
+.phpunit.result.cache
+node_modules
+vendor
+public/storage
+public/build
+storage/*.key
+storage/pail
+docker
+tests
+Dockerfile
+render.yaml
+README.md
