@@ -1,5 +1,5 @@
-# Multi-Stage Production Dockerfile for Laravel 13 + PHP 8.3 + Node Vite
-FROM php:8.3-fpm-alpine
+# Multi-Stage Production Dockerfile for Laravel 13 + PHP 8.4 + Node Vite
+FROM php:8.4-fpm-alpine
 
 # Set working directory
 WORKDIR /var/www/html
