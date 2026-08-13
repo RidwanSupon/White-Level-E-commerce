@@ -5,6 +5,7 @@ FROM php:8.3-fpm-alpine
 WORKDIR /var/www/html
 
 # Install system dependencies & PHP extensions required by Laravel & PostgreSQL
+# Cache Invalidation Token: v2.0-render-clean-build
 RUN apk add --no-cache \
     icu-dev \
     libzip-dev \
