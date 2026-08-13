@@ -25,8 +25,9 @@ echo "🔗 Ensuring Storage Link..."
 php artisan storage:link --force || true
 
 # 4. Clear Stale Caches
-echo "🧹 Clearing stale config and route caches..."
+echo "🧹 Clearing stale config, cache, and route caches..."
 php artisan config:clear || true
+php artisan cache:clear || true
 php artisan route:clear || true
 php artisan view:clear || true
 
