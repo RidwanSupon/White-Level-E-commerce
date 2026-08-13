@@ -10,7 +10,6 @@ public/storage
 public/build
 storage/*.key
 storage/pail
-docker
 tests
 Dockerfile
 render.yaml

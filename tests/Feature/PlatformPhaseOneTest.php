@@ -28,7 +28,7 @@ class PlatformPhaseOneTest extends TestCase
     {
         $response = $this->get('/shop');
         $response->assertStatus(200);
-        $response->assertSee('iPhone 16 Pro Max 256GB');
+        $response->assertSee(Product::first()->name);
     }
 
     public function test_customer_can_login_with_demo_credentials()
