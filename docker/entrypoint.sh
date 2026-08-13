@@ -31,7 +31,7 @@ php artisan route:clear || true
 php artisan view:clear || true
 
 # 5. Database Migrations (Safe force run for production)
-if [ "$APP_ENV" = "production" ] || [ -n "$DATABASE_URL" ]; then
+if [ "$APP_ENV" = "production" ] || [ -n "$DATABASE_URL" ] || [ -n "$DB_HOST" ]; then
     echo "🗄️ Executing database migrations..."
     php artisan migrate --force
 fi
